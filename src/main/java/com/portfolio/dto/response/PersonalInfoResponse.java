@@ -10,6 +10,7 @@ public record PersonalInfoResponse(
         String phone,
         String email,
         String domicile,
+        String avatarUrl,
         String linkedinUrl,
         String githubUrl,
         String websiteUrl,

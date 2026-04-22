@@ -10,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +32,7 @@ public class PortfolioService {
     private final AwardRepository awardRepository;
     private final LanguageRepository languageRepository;
 
+    private final ImageStorageService imageStorageService;
     private final PersonalInfoMapper personalInfoMapper;
     private final ProfessionalSummaryMapper summaryMapper;
     private final WorkExperienceMapper workExperienceMapper;
@@ -56,6 +59,32 @@ public class PortfolioService {
                 .orElse(PersonalInfo.builder().user(user).build());
 
         personalInfoMapper.updateFromRequest(request, info);
+        return personalInfoMapper.toResponse(personalInfoRepository.save(info));
+    }
+
+    @Transactional
+    public PersonalInfoResponse uploadAvatar(UUID userId, MultipartFile file) throws IOException {
+        User user = getUser(userId);
+        PersonalInfo info = personalInfoRepository.findByUser(user)
+                .orElse(PersonalInfo.builder().user(user).build());
+
+        if (info.getAvatarUrl() != null) {
+            imageStorageService.deleteAvatar(info.getAvatarUrl());
+        }
+
+        String avatarUrl = imageStorageService.storeAvatar(file, userId);
+        info.setAvatarUrl(avatarUrl);
+        return personalInfoMapper.toResponse(personalInfoRepository.save(info));
+    }
+
+    @Transactional
+    public PersonalInfoResponse deleteAvatar(UUID userId) {
+        User user = getUser(userId);
+        PersonalInfo info = personalInfoRepository.findByUser(user)
+                .orElseThrow(() -> new ResourceNotFoundException("Personal info not found"));
+
+        imageStorageService.deleteAvatar(info.getAvatarUrl());
+        info.setAvatarUrl(null);
         return personalInfoMapper.toResponse(personalInfoRepository.save(info));
     }
 

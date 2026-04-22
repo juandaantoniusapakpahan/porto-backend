@@ -22,6 +22,7 @@ public class PdfService {
 
     private final TemplateEngine templateEngine;
     private final PublicPortfolioService publicPortfolioService;
+    private final ImageStorageService imageStorageService;
 
     public byte[] generatePortfolioPdf(String username) {
         PublicPortfolioResponse portfolio = publicPortfolioService.getPortfolioByUsername(username);
@@ -43,6 +44,17 @@ public class PdfService {
         context.setVariable("projects", portfolio.projects());
         context.setVariable("awards", portfolio.awards());
         context.setVariable("languages", portfolio.languages());
+
+        // Convert local avatar to base64 so Flying Saucer can embed it without HTTP
+        String avatarDataUrl = null;
+        if (portfolio.personalInfo() != null && portfolio.personalInfo().avatarUrl() != null) {
+            avatarDataUrl = imageStorageService.toCircularDataUrl(portfolio.personalInfo().avatarUrl());
+        }
+        if (avatarDataUrl == null && portfolio.user() != null) {
+            avatarDataUrl = portfolio.user().avatarUrl();
+        }
+        context.setVariable("avatarDataUrl", avatarDataUrl);
+
         return templateEngine.process("portfolio-pdf", context);
     }
 

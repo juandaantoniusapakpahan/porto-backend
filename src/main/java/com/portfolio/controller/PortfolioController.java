@@ -11,9 +11,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.UUID;
@@ -44,6 +46,27 @@ public class PortfolioController {
         return ResponseEntity.ok(ApiResponse.success(
                 portfolioService.upsertPersonalInfo(principal.id(), request),
                 "Personal info saved"
+        ));
+    }
+
+    @PostMapping(value = "/personal-info/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Upload or replace profile photo")
+    public ResponseEntity<ApiResponse<PersonalInfoResponse>> uploadAvatar(
+            @AuthenticationPrincipal UserPrincipal principal,
+            @RequestParam("file") MultipartFile file) throws Exception {
+        return ResponseEntity.ok(ApiResponse.success(
+                portfolioService.uploadAvatar(principal.id(), file),
+                "Profile photo uploaded"
+        ));
+    }
+
+    @DeleteMapping("/personal-info/avatar")
+    @Operation(summary = "Delete profile photo")
+    public ResponseEntity<ApiResponse<PersonalInfoResponse>> deleteAvatar(
+            @AuthenticationPrincipal UserPrincipal principal) {
+        return ResponseEntity.ok(ApiResponse.success(
+                portfolioService.deleteAvatar(principal.id()),
+                "Profile photo deleted"
         ));
     }
 

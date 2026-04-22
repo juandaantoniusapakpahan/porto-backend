@@ -52,6 +52,9 @@ public class PersonalInfo {
     @Column(name = "website_url", columnDefinition = "TEXT")
     private String websiteUrl;
 
+    @Column(name = "avatar_url", columnDefinition = "TEXT")
+    private String avatarUrl;
+
     @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "other_links", columnDefinition = "jsonb")
     @Builder.Default

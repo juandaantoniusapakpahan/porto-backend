@@ -19,5 +19,6 @@ public interface PersonalInfoMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "user", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
+    @Mapping(target = "avatarUrl", ignore = true)
     void updateFromRequest(PersonalInfoRequest request, @MappingTarget PersonalInfo entity);
 }

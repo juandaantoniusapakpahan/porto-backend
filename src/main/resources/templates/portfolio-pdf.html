@@ -2,504 +2,613 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8"/>
-    <title th:text="${personalInfo?.fullName ?: user.username} + ' — Portfolio'">Portfolio</title>
+    <title th:text="${personalInfo?.fullName ?: user.username} + ' - Resume'">Resume</title>
     <style>
-        /* ===== Reset & Base ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            font-size: 10pt;
-            color: #1a1a2e;
+            font-size: 9pt;
+            color: #333333;
             background: #ffffff;
             line-height: 1.5;
         }
 
-        /* ===== Page ===== */
-        @page {
-            size: A4;
-            margin: 0;
-        }
+        @page { size: A4; margin: 0; }
 
         .page {
             width: 210mm;
-            min-height: 297mm;
-            display: flex;
+            height: 297mm;
+            display: table;
         }
 
-        /* ===== Sidebar ===== */
         .sidebar {
+            display: table-cell;
             width: 68mm;
-            background: #1a1a2e;
-            color: #ffffff;
-            padding: 8mm 6mm;
-            min-height: 297mm;
+            background: #1c1c1c;
+            vertical-align: top;
         }
 
-        .sidebar .avatar {
-            width: 28mm;
-            height: 28mm;
-            border-radius: 50%;
-            background: #16213e;
-            border: 2px solid #0f3460;
-            margin: 0 auto 5mm auto;
+        .main {
+            display: table-cell;
+            background: #ffffff;
+            vertical-align: top;
+            padding: 10mm 8mm 8mm 8mm;
+        }
+
+        /* Avatar */
+        .avatar-area {
+            text-align: center;
+            padding: 10mm 8mm 8mm 8mm;
+            background: #141414;
+        }
+
+        .avatar {
+            width: 50mm;
+            height: 50mm;
             display: block;
-            object-fit: cover;
+            margin: 0 auto;
         }
 
-        .sidebar .name {
-            font-size: 14pt;
+        .avatar-placeholder {
+            width: 50mm;
+            height: 50mm;
+            border-radius: 50%;
+            display: table;
+            margin: 0 auto;
+            background: #2e2e2e;
+        }
+
+        .avatar-placeholder-inner {
+            display: table-cell;
+            vertical-align: middle;
+            text-align: center;
+            font-size: 22pt;
             font-weight: bold;
-            color: #e94560;
-            text-align: center;
-            line-height: 1.2;
-            margin-bottom: 2mm;
+            color: #9B3520;
         }
 
-        .sidebar .title {
-            font-size: 8pt;
-            color: #a8b2d8;
-            text-align: center;
-            margin-bottom: 6mm;
-            font-style: italic;
-        }
-
-        .sidebar-section {
-            margin-bottom: 6mm;
-        }
-
-        .sidebar-section-title {
-            font-size: 7pt;
+        /* Sidebar section header */
+        .sb-header {
+            background: #9B3520;
+            color: #ffffff;
+            font-size: 9pt;
             font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
-            color: #e94560;
-            border-bottom: 1px solid #0f3460;
-            padding-bottom: 1.5mm;
-            margin-bottom: 3mm;
+            letter-spacing: 2.5px;
+            padding: 3mm 5mm;
         }
 
-        .contact-item {
-            font-size: 7.5pt;
-            color: #ccd6f6;
-            margin-bottom: 1.5mm;
-            word-break: break-all;
+        .sb-content {
+            padding: 4mm 5mm 2mm 5mm;
+        }
+
+        /* Contact */
+        .contact-row {
+            margin-bottom: 4mm;
         }
 
         .contact-label {
-            color: #a8b2d8;
-            font-size: 6.5pt;
+            font-size: 7pt;
+            font-weight: bold;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #ffffff;
+            margin-bottom: 0.5mm;
         }
 
-        /* Skills */
-        .skill-item {
+        .contact-value {
+            font-size: 7.5pt;
+            color: #aaaaaa;
+            word-break: break-all;
+        }
+
+        /* Skills / Languages */
+        .sb-item-row {
+            display: table;
+            width: 100%;
             margin-bottom: 2.5mm;
         }
 
-        .skill-name {
-            font-size: 7.5pt;
-            color: #ccd6f6;
-            margin-bottom: 0.8mm;
+        .sb-dot-cell {
+            display: table-cell;
+            width: 5mm;
+            vertical-align: middle;
         }
 
-        .skill-bar-bg {
-            background: #0f3460;
-            height: 2mm;
-            border-radius: 1mm;
-        }
-
-        .skill-bar-fill {
-            background: #e94560;
-            height: 2mm;
-            border-radius: 1mm;
-        }
-
-        .skill-tag {
+        .sb-dot {
             display: inline-block;
-            background: #0f3460;
-            color: #a8b2d8;
-            font-size: 6.5pt;
-            padding: 0.5mm 2mm;
-            border-radius: 2mm;
-            margin: 0.5mm 0.5mm 0.5mm 0;
+            width: 3mm;
+            height: 3mm;
+            border-radius: 50%;
+            background: #E07B39;
+            vertical-align: middle;
         }
 
-        /* Languages */
-        .lang-item {
-            display: flex;
-            justify-content: space-between;
-            font-size: 7.5pt;
-            color: #ccd6f6;
-            margin-bottom: 1.5mm;
+        .sb-text-cell {
+            display: table-cell;
+            vertical-align: middle;
+        }
+
+        .skill-name {
+            font-size: 8pt;
+            color: #cccccc;
+        }
+
+        .lang-name {
+            font-size: 8pt;
+            font-weight: bold;
+            color: #eeeeee;
         }
 
         .lang-level {
-            color: #a8b2d8;
-            font-size: 6.5pt;
+            font-size: 8pt;
+            color: #aaaaaa;
         }
 
-        /* ===== Main Content ===== */
-        .main {
-            flex: 1;
-            padding: 8mm 7mm 8mm 7mm;
+        /* Main: Name */
+        .name-block {
+            text-align: center;
+            margin-bottom: 2mm;
+            line-height: 1.05;
         }
 
-        .section {
-            margin-bottom: 6mm;
-        }
-
-        .section-title {
-            font-size: 11pt;
+        .name-first {
+            display: block;
+            font-size: 30pt;
             font-weight: bold;
-            color: #1a1a2e;
-            border-bottom: 2px solid #e94560;
-            padding-bottom: 1.5mm;
-            margin-bottom: 4mm;
+            color: #9B3520;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 5px;
         }
 
-        /* Summary */
+        .name-last {
+            display: block;
+            font-size: 30pt;
+            font-weight: bold;
+            color: #1a1a1a;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+        }
+
+        .name-single {
+            display: block;
+            font-size: 26pt;
+            font-weight: bold;
+            color: #9B3520;
+            text-transform: uppercase;
+            letter-spacing: 5px;
+        }
+
+        .job-title {
+            font-size: 8.5pt;
+            color: #777777;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-align: center;
+            margin-top: 2.5mm;
+            margin-bottom: 3mm;
+        }
+
+        .divider {
+            border-top: 1pt solid #cccccc;
+            margin-bottom: 4mm;
+        }
+
         .summary-text {
-            font-size: 9pt;
-            color: #4a4a6a;
-            line-height: 1.6;
+            font-size: 8.5pt;
+            color: #444444;
+            line-height: 1.7;
             text-align: justify;
         }
 
-        /* Experience / Education card */
-        .entry {
+        /* Section band */
+        .section-band {
+            background: #9B3520;
+            color: #ffffff;
+            font-size: 10pt;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            padding: 3mm 5mm;
+            margin-top: 5mm;
             margin-bottom: 4mm;
-            padding-bottom: 4mm;
-            border-bottom: 0.5pt solid #e8e8f0;
         }
 
-        .entry:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
+        /* Entry row */
+        .entry-table {
+            display: table;
+            width: 100%;
+            margin-bottom: 5mm;
         }
 
-        .entry-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.8mm;
+        .entry-dot-cell {
+            display: table-cell;
+            width: 6mm;
+            vertical-align: top;
+            padding-top: 1mm;
+        }
+
+        .entry-dot {
+            display: inline-block;
+            width: 3.5mm;
+            height: 3.5mm;
+            border-radius: 50%;
+            background: #E07B39;
+            vertical-align: top;
+        }
+
+        .entry-body {
+            display: table-cell;
+            vertical-align: top;
+        }
+
+        .entry-header-table {
+            display: table;
+            width: 100%;
+            margin-bottom: 0.5mm;
+        }
+
+        .entry-header-left {
+            display: table-cell;
+            vertical-align: top;
+        }
+
+        .entry-header-right {
+            display: table-cell;
+            vertical-align: top;
+            text-align: right;
+            white-space: nowrap;
+            width: 22mm;
         }
 
         .entry-title {
-            font-size: 9.5pt;
+            font-size: 9pt;
             font-weight: bold;
-            color: #1a1a2e;
+            color: #1a1a1a;
+            text-transform: uppercase;
         }
 
-        .entry-date {
+        .entry-meta {
             font-size: 7.5pt;
-            color: #888899;
-            white-space: nowrap;
-            margin-left: 3mm;
+            color: #666666;
+            margin-bottom: 2mm;
         }
 
-        .entry-subtitle {
-            font-size: 8.5pt;
-            color: #0f3460;
-            font-weight: 600;
-            margin-bottom: 1.5mm;
-        }
-
-        .entry-location {
+        .entry-date-text {
             font-size: 7.5pt;
-            color: #888899;
+            color: #666666;
         }
 
         .entry-bullets {
-            margin-top: 1.5mm;
-            padding-left: 4mm;
+            padding-left: 3mm;
+            margin-top: 1mm;
         }
 
         .entry-bullet {
             font-size: 8pt;
-            color: #4a4a6a;
-            margin-bottom: 1mm;
+            color: #444444;
+            margin-bottom: 1.5mm;
             list-style-type: disc;
         }
 
-        .entry-desc {
-            font-size: 8pt;
-            color: #4a4a6a;
-            margin-top: 1mm;
+        /* Education */
+        .edu-degree {
+            font-size: 9pt;
+            font-weight: bold;
+            color: #1a1a1a;
+            text-transform: uppercase;
+        }
+
+        .edu-meta {
+            font-size: 7.5pt;
+            color: #666666;
+        }
+
+        .gpa-badge {
+            display: inline-block;
+            background: #9B3520;
+            color: #ffffff;
+            font-size: 6.5pt;
+            padding: 0.3mm 1.5mm;
+            border-radius: 1mm;
+            margin-left: 2mm;
         }
 
         /* Projects */
-        .project-entry {
-            margin-bottom: 3.5mm;
-        }
-
-        .project-name {
+        .proj-name {
             font-size: 9pt;
             font-weight: bold;
-            color: #1a1a2e;
-        }
-
-        .project-tech {
-            margin: 1mm 0;
+            color: #1a1a1a;
         }
 
         .tech-tag {
             display: inline-block;
-            background: #f0f0f8;
-            color: #0f3460;
+            background: #f5f5f5;
+            color: #555555;
             font-size: 6.5pt;
-            padding: 0.5mm 1.8mm;
-            border-radius: 2mm;
+            padding: 0.5mm 2mm;
+            border-radius: 1.5mm;
             margin: 0.3mm;
-            border: 0.5pt solid #d0d0e8;
+            border: 0.5pt solid #dddddd;
         }
 
-        /* Certifications & Awards */
+        /* Certs / Awards */
         .cert-item {
-            margin-bottom: 3mm;
+            margin-bottom: 3.5mm;
         }
 
         .cert-name {
             font-size: 8.5pt;
             font-weight: bold;
-            color: #1a1a2e;
+            color: #1a1a1a;
         }
 
-        .cert-issuer {
+        .cert-meta {
             font-size: 7.5pt;
-            color: #4a4a6a;
-        }
-
-        .cert-date {
-            font-size: 7pt;
-            color: #888899;
-        }
-
-        /* GPA badge */
-        .gpa-badge {
-            display: inline-block;
-            background: #e94560;
-            color: white;
-            font-size: 7pt;
-            padding: 0.5mm 2mm;
-            border-radius: 2mm;
-            margin-left: 2mm;
+            color: #666666;
         }
 
         /* Footer */
         .pdf-footer {
             font-size: 6.5pt;
-            color: #aaaacc;
+            color: #bbbbbb;
             text-align: center;
-            margin-top: 4mm;
-            padding-top: 2mm;
-            border-top: 0.5pt solid #e8e8f0;
+            margin-top: 6mm;
+            padding-top: 2.5mm;
+            border-top: 0.5pt solid #eeeeee;
         }
     </style>
 </head>
 <body>
 <div class="page">
 
-    <!-- ===== SIDEBAR ===== -->
+    <!-- SIDEBAR -->
     <div class="sidebar">
 
-        <!-- Avatar -->
-        <img th:if="${user.avatarUrl}"
-             th:src="${user.avatarUrl}"
-             class="avatar"
-             alt="Profile Photo"/>
-        <div th:unless="${user.avatarUrl}"
-             class="avatar"
-             style="display:flex;align-items:center;justify-content:center;font-size:18pt;color:#e94560;">
-            <span th:text="${#strings.substring(user.username, 0, 1).toUpperCase()}">U</span>
+        <div class="avatar-area">
+            <img th:if="${avatarDataUrl}"
+                 th:src="${avatarDataUrl}"
+                 class="avatar"
+                 alt="Profile Photo"/>
+            <div th:unless="${avatarDataUrl}" class="avatar-placeholder">
+                <div class="avatar-placeholder-inner"
+                     th:text="${#strings.substring(user.username, 0, 1).toUpperCase()}">U</div>
+            </div>
         </div>
 
-        <!-- Name & Title -->
-        <div class="name" th:text="${personalInfo?.fullName ?: user.username}">Full Name</div>
-        <div class="title" th:if="${personalInfo?.professionalTitle}"
-             th:text="${personalInfo.professionalTitle}">Software Engineer</div>
-
-        <!-- Contact -->
-        <div class="sidebar-section">
-            <div class="sidebar-section-title">Contact</div>
-            <div class="contact-item" th:if="${personalInfo?.email}">
-                <div class="contact-label">Email</div>
-                <div th:text="${personalInfo.email}"></div>
-            </div>
-            <div class="contact-item" th:if="${personalInfo?.phone}">
+        <!-- CONTACT -->
+        <div class="sb-header">Contact</div>
+        <div class="sb-content">
+            <div class="contact-row" th:if="${personalInfo?.phone}">
                 <div class="contact-label">Phone</div>
-                <div th:text="${personalInfo.phone}"></div>
+                <div class="contact-value" th:text="${personalInfo.phone}"></div>
             </div>
-            <div class="contact-item" th:if="${personalInfo?.domicile}">
-                <div class="contact-label">Location</div>
-                <div th:text="${personalInfo.domicile}"></div>
+            <div class="contact-row" th:if="${personalInfo?.email}">
+                <div class="contact-label">Email</div>
+                <div class="contact-value" th:text="${personalInfo.email}"></div>
             </div>
-            <div class="contact-item" th:if="${personalInfo?.linkedinUrl}">
+            <div class="contact-row" th:if="${personalInfo?.domicile}">
+                <div class="contact-label">Address</div>
+                <div class="contact-value" th:text="${personalInfo.domicile}"></div>
+            </div>
+            <div class="contact-row" th:if="${personalInfo?.linkedinUrl}">
                 <div class="contact-label">LinkedIn</div>
-                <div th:text="${personalInfo.linkedinUrl}"></div>
+                <div class="contact-value" th:text="${personalInfo.linkedinUrl}"></div>
             </div>
-            <div class="contact-item" th:if="${personalInfo?.githubUrl}">
+            <div class="contact-row" th:if="${personalInfo?.githubUrl}">
                 <div class="contact-label">GitHub</div>
-                <div th:text="${personalInfo.githubUrl}"></div>
+                <div class="contact-value" th:text="${personalInfo.githubUrl}"></div>
             </div>
-            <div class="contact-item" th:if="${personalInfo?.websiteUrl}">
+            <div class="contact-row" th:if="${personalInfo?.websiteUrl}">
                 <div class="contact-label">Website</div>
-                <div th:text="${personalInfo.websiteUrl}"></div>
+                <div class="contact-value" th:text="${personalInfo.websiteUrl}"></div>
             </div>
         </div>
 
-        <!-- Skills (Hard only in sidebar) -->
-        <div class="sidebar-section" th:if="${skills != null and !skills.isEmpty()}">
-            <div class="sidebar-section-title">Skills</div>
-            <th:block th:each="skill : ${skills}">
-                <div class="skill-item" th:if="${skill.category.name() == 'HARD'}">
-                    <div class="skill-name" th:text="${skill.name}">Skill</div>
-                    <div class="skill-bar-bg">
-                        <div class="skill-bar-fill"
-                             th:style="'width: ' + (skill.proficiencyLevel.name() == 'BEGINNER' ? '25' :
-                                        skill.proficiencyLevel.name() == 'INTERMEDIATE' ? '50' :
-                                        skill.proficiencyLevel.name() == 'ADVANCED' ? '75' : '100') + '%'">
+        <!-- SKILLS -->
+        <div th:if="${skills != null and !skills.isEmpty()}">
+            <div class="sb-header">Skills</div>
+            <div class="sb-content">
+                <th:block th:each="skill : ${skills}">
+                    <div class="sb-item-row">
+                        <div class="sb-dot-cell"><span class="sb-dot"></span></div>
+                        <div class="sb-text-cell"><span class="skill-name" th:text="${skill.name}">Skill</span></div>
+                    </div>
+                </th:block>
+            </div>
+        </div>
+
+        <!-- LANGUAGES -->
+        <div th:if="${languages != null and !languages.isEmpty()}">
+            <div class="sb-header">Languages</div>
+            <div class="sb-content">
+                <th:block th:each="lang : ${languages}">
+                    <div class="sb-item-row">
+                        <div class="sb-dot-cell"><span class="sb-dot"></span></div>
+                        <div class="sb-text-cell">
+                            <span class="lang-name" th:text="${lang.languageName}">English</span>
+                            <span class="lang-level">: </span>
+                            <span class="lang-level" th:text="${lang.proficiency}">Native</span>
                         </div>
                     </div>
-                </div>
-            </th:block>
-        </div>
-
-        <!-- Soft Skills -->
-        <div class="sidebar-section"
-             th:if="${skills != null and #lists.size(#lists.toList(skills.?[category.name() == 'SOFT'])) > 0}">
-            <div class="sidebar-section-title">Soft Skills</div>
-            <th:block th:each="skill : ${skills}">
-                <span class="skill-tag" th:if="${skill.category.name() == 'SOFT'}"
-                      th:text="${skill.name}">Skill</span>
-            </th:block>
-        </div>
-
-        <!-- Languages -->
-        <div class="sidebar-section" th:if="${languages != null and !languages.isEmpty()}">
-            <div class="sidebar-section-title">Languages</div>
-            <div class="lang-item" th:each="lang : ${languages}">
-                <span th:text="${lang.languageName}">English</span>
-                <span class="lang-level" th:text="${lang.proficiency}">FLUENT</span>
+                </th:block>
             </div>
         </div>
 
     </div>
-    <!-- End Sidebar -->
 
-    <!-- ===== MAIN CONTENT ===== -->
+    <!-- MAIN CONTENT -->
     <div class="main">
 
-        <!-- Professional Summary -->
-        <div class="section" th:if="${summary != null and summary.content != null}">
-            <div class="section-title">About Me</div>
-            <p class="summary-text" th:text="${summary.content}"></p>
+        <div class="name-block">
+            <th:block th:if="${personalInfo?.fullName}">
+                <span class="name-first"
+                      th:text="${#strings.contains(personalInfo.fullName, ' ') ? #strings.substringBefore(personalInfo.fullName, ' ') : personalInfo.fullName}">FIRST</span>
+                <span class="name-last"
+                      th:if="${#strings.contains(personalInfo.fullName, ' ')}"
+                      th:text="${#strings.substringAfter(personalInfo.fullName, ' ')}">LAST</span>
+            </th:block>
+            <th:block th:unless="${personalInfo?.fullName}">
+                <span class="name-single" th:text="${user.username}">USERNAME</span>
+            </th:block>
         </div>
 
-        <!-- Work Experience -->
-        <div class="section" th:if="${experiences != null and !experiences.isEmpty()}">
-            <div class="section-title">Work Experience</div>
-            <div class="entry" th:each="exp : ${experiences}">
-                <div class="entry-header">
-                    <div>
-                        <div class="entry-title" th:text="${exp.position}">Position</div>
-                        <div class="entry-subtitle" th:text="${exp.companyName}">Company</div>
-                        <div class="entry-location" th:if="${exp.location}" th:text="${exp.location}">Location</div>
+        <div class="job-title" th:if="${personalInfo?.professionalTitle}"
+             th:text="${personalInfo.professionalTitle}">Professional Title</div>
+
+        <div class="divider"></div>
+
+        <p class="summary-text"
+           th:if="${summary != null and summary.content != null}"
+           th:text="${summary.content}"></p>
+
+        <!-- EXPERIENCE -->
+        <div th:if="${experiences != null and !experiences.isEmpty()}">
+            <div class="section-band">Experience</div>
+            <th:block th:each="exp : ${experiences}">
+                <div class="entry-table">
+                    <div class="entry-dot-cell">
+                        <span class="entry-dot"></span>
                     </div>
-                    <div class="entry-date">
-                        <span th:text="${#temporals.format(exp.startDate, 'MMM yyyy')}">Jan 2020</span>
-                        <span> — </span>
-                        <span th:if="${exp.isCurrent}">Present</span>
-                        <span th:unless="${exp.isCurrent}"
-                              th:text="${exp.endDate != null ? #temporals.format(exp.endDate, 'MMM yyyy') : ''}">Dec 2022</span>
+                    <div class="entry-body">
+                        <div class="entry-header-table">
+                            <div class="entry-header-left">
+                                <div class="entry-title" th:text="${exp.position}">Position</div>
+                            </div>
+                            <div class="entry-header-right">
+                                <div class="entry-date-text">
+                                    <span th:text="${#temporals.format(exp.startDate, 'yyyy')}">2020</span>
+                                    <span> - </span>
+                                    <span th:if="${exp.isCurrent}">Present</span>
+                                    <span th:unless="${exp.isCurrent}"
+                                          th:text="${exp.endDate != null ? #temporals.format(exp.endDate, 'yyyy') : ''}">2022</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="entry-meta">
+                            <span th:text="${exp.companyName}">Company</span>
+                            <span th:if="${exp.location}">, </span>
+                            <span th:if="${exp.location}" th:text="${exp.location}">Location</span>
+                        </div>
+                        <ul class="entry-bullets"
+                            th:if="${exp.descriptionPoints != null and !exp.descriptionPoints.isEmpty()}">
+                            <li class="entry-bullet"
+                                th:each="point : ${exp.descriptionPoints}"
+                                th:text="${point}">Point</li>
+                        </ul>
                     </div>
                 </div>
-                <ul class="entry-bullets" th:if="${exp.descriptionPoints != null and !exp.descriptionPoints.isEmpty()}">
-                    <li class="entry-bullet" th:each="point : ${exp.descriptionPoints}"
-                        th:text="${point}">Description point</li>
-                </ul>
-            </div>
+            </th:block>
         </div>
 
-        <!-- Education -->
-        <div class="section" th:if="${educations != null and !educations.isEmpty()}">
-            <div class="section-title">Education</div>
-            <div class="entry" th:each="edu : ${educations}">
-                <div class="entry-header">
-                    <div>
-                        <div class="entry-title" th:text="${edu.institution}">Institution</div>
-                        <div class="entry-subtitle">
-                            <span th:if="${edu.degree}" th:text="${edu.degree}"></span>
-                            <span th:if="${edu.degree and edu.major}"> in </span>
-                            <span th:if="${edu.major}" th:text="${edu.major}"></span>
-                            <span class="gpa-badge" th:if="${edu.gpa != null}"
-                                  th:text="'GPA: ' + ${edu.gpa}">GPA</span>
+        <!-- EDUCATION -->
+        <div th:if="${educations != null and !educations.isEmpty()}">
+            <div class="section-band">Education</div>
+            <th:block th:each="edu : ${educations}">
+                <div class="entry-table">
+                    <div class="entry-dot-cell">
+                        <span class="entry-dot"></span>
+                    </div>
+                    <div class="entry-body">
+                        <div class="entry-header-table">
+                            <div class="entry-header-left">
+                                <div class="edu-degree">
+                                    <span th:if="${edu.degree}" th:text="${edu.degree}"></span>
+                                    <span th:if="${edu.degree != null and edu.major != null}"> in </span>
+                                    <span th:if="${edu.major}" th:text="${edu.major}"></span>
+                                    <span class="gpa-badge" th:if="${edu.gpa != null}"
+                                          th:text="'GPA: ' + ${edu.gpa}">GPA</span>
+                                </div>
+                            </div>
+                            <div class="entry-header-right">
+                                <div class="entry-date-text"
+                                     th:if="${edu.endYear}"
+                                     th:text="${edu.endYear}">2020</div>
+                            </div>
+                        </div>
+                        <div class="edu-meta" th:text="${edu.institution}">Institution</div>
+                    </div>
+                </div>
+            </th:block>
+        </div>
+
+        <!-- PROJECTS -->
+        <div th:if="${projects != null and !projects.isEmpty()}">
+            <div class="section-band">Projects</div>
+            <th:block th:each="proj : ${projects}">
+                <div class="entry-table">
+                    <div class="entry-dot-cell">
+                        <span class="entry-dot"></span>
+                    </div>
+                    <div class="entry-body">
+                        <div class="entry-header-table">
+                            <div class="entry-header-left">
+                                <div class="proj-name" th:text="${proj.name}">Project</div>
+                            </div>
+                            <div class="entry-header-right">
+                                <div class="entry-date-text" th:if="${proj.startDate}"
+                                     th:text="${#temporals.format(proj.startDate, 'MMM yyyy')}"></div>
+                            </div>
+                        </div>
+                        <div th:if="${proj.techStack != null and !proj.techStack.isEmpty()}"
+                             style="margin: 1mm 0 1.5mm 0;">
+                            <span class="tech-tag"
+                                  th:each="tech : ${proj.techStack}"
+                                  th:text="${tech}">Tech</span>
+                        </div>
+                        <div class="entry-meta"
+                             th:if="${proj.description}"
+                             th:text="${proj.description}"></div>
+                    </div>
+                </div>
+            </th:block>
+        </div>
+
+        <!-- CERTIFICATIONS -->
+        <div th:if="${certifications != null and !certifications.isEmpty()}">
+            <div class="section-band">Certifications</div>
+            <th:block th:each="cert : ${certifications}">
+                <div class="cert-item">
+                    <div class="entry-header-table">
+                        <div class="entry-header-left">
+                            <div class="cert-name" th:text="${cert.name}">Cert</div>
+                        </div>
+                        <div class="entry-header-right">
+                            <div class="entry-date-text" th:if="${cert.issueDate}"
+                                 th:text="${#temporals.format(cert.issueDate, 'MMM yyyy')}"></div>
                         </div>
                     </div>
-                    <div class="entry-date">
-                        <span th:if="${edu.startYear}" th:text="${edu.startYear}"></span>
-                        <span th:if="${edu.startYear and edu.endYear}"> — </span>
-                        <span th:if="${edu.endYear}" th:text="${edu.endYear}"></span>
+                    <div class="cert-meta" th:text="${cert.issuer}">Issuer</div>
+                </div>
+            </th:block>
+        </div>
+
+        <!-- AWARDS -->
+        <div th:if="${awards != null and !awards.isEmpty()}">
+            <div class="section-band">Awards &amp; Honors</div>
+            <th:block th:each="award : ${awards}">
+                <div class="cert-item">
+                    <div class="entry-header-table">
+                        <div class="entry-header-left">
+                            <div class="cert-name" th:text="${award.title}">Award</div>
+                        </div>
+                        <div class="entry-header-right">
+                            <div class="entry-date-text" th:if="${award.date}"
+                                 th:text="${#temporals.format(award.date, 'MMM yyyy')}">Date</div>
+                        </div>
                     </div>
+                    <div class="cert-meta" th:if="${award.issuer}" th:text="${award.issuer}">Issuer</div>
+                    <div class="cert-meta" th:if="${award.description}" th:text="${award.description}"></div>
                 </div>
-            </div>
+            </th:block>
         </div>
 
-        <!-- Projects -->
-        <div class="section" th:if="${projects != null and !projects.isEmpty()}">
-            <div class="section-title">Projects</div>
-            <div class="project-entry" th:each="proj : ${projects}">
-                <div class="entry-header">
-                    <div class="project-name" th:text="${proj.name}">Project Name</div>
-                    <div class="entry-date" th:if="${proj.startDate}">
-                        <span th:text="${#temporals.format(proj.startDate, 'MMM yyyy')}"></span>
-                    </div>
-                </div>
-                <div class="project-tech" th:if="${proj.techStack != null and !proj.techStack.isEmpty()}">
-                    <span class="tech-tag" th:each="tech : ${proj.techStack}" th:text="${tech}">Tech</span>
-                </div>
-                <div class="entry-desc" th:if="${proj.description}" th:text="${proj.description}"></div>
-            </div>
-        </div>
-
-        <!-- Certifications -->
-        <div class="section" th:if="${certifications != null and !certifications.isEmpty()}">
-            <div class="section-title">Certifications</div>
-            <div class="cert-item" th:each="cert : ${certifications}">
-                <div class="cert-name" th:text="${cert.name}">Certification</div>
-                <div class="cert-issuer" th:text="${cert.issuer}">Issuer</div>
-                <div class="cert-date" th:if="${cert.issueDate}"
-                     th:text="'Issued: ' + ${#temporals.format(cert.issueDate, 'MMMM yyyy')}">Date</div>
-            </div>
-        </div>
-
-        <!-- Awards -->
-        <div class="section" th:if="${awards != null and !awards.isEmpty()}">
-            <div class="section-title">Awards &amp; Honors</div>
-            <div class="cert-item" th:each="award : ${awards}">
-                <div class="entry-header">
-                    <div>
-                        <div class="cert-name" th:text="${award.title}">Award</div>
-                        <div class="cert-issuer" th:if="${award.issuer}" th:text="${award.issuer}">Issuer</div>
-                    </div>
-                    <div class="entry-date" th:if="${award.date}"
-                         th:text="${#temporals.format(award.date, 'MMM yyyy')}">Date</div>
-                </div>
-                <div class="entry-desc" th:if="${award.description}" th:text="${award.description}"></div>
-            </div>
-        </div>
-
-        <!-- Footer -->
         <div class="pdf-footer"
              th:text="'Generated on ' + ${#temporals.format(#temporals.createNow(), 'MMMM dd, yyyy')}">
-            Generated on April 11, 2026
         </div>
 
     </div>
-    <!-- End Main -->
 
 </div>
 </body>
