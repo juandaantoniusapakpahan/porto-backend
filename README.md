@@ -57,7 +57,24 @@ Portfolio Backend API built with **Spring Boot 3**, featuring JWT authentication
 
 ## Running Locally
 
-### 1. Start PostgreSQL with Docker
+### 1. Setup Environment Variables
+
+Copy `.env.example` and fill in the values:
+
+```bash
+cp .env.example .env
+```
+
+Then edit `.env` — minimal required for dev:
+
+```env
+GITHUB_CLIENT_ID=your-github-client-id
+GITHUB_CLIENT_SECRET=your-github-client-secret
+```
+
+> `.env` is listed in `.gitignore` and will never be committed. Only `.env.example` is tracked.
+
+### 2. Start PostgreSQL with Docker
 
 ```bash
 docker-compose up -d
@@ -67,14 +84,14 @@ This starts:
 - **PostgreSQL** on `localhost:5432` (db: `portfolio_db`)
 - **pgAdmin** on `http://localhost:5050` (email: `admin@portfolio.dev`, password: `admin`)
 
-### 2. Configure GitHub OAuth App
+### 3. Configure GitHub OAuth App
 
 1. Go to GitHub → Settings → Developer settings → OAuth Apps → New OAuth App
 2. Set **Homepage URL**: `http://localhost:8080`
 3. Set **Authorization callback URL**: `http://localhost:8080/login/oauth2/code/github`
 4. Copy the **Client ID** and **Client Secret**
 
-### 3. Run the Application
+### 4. Run the Application
 
 ```bash
 # Export required env vars
